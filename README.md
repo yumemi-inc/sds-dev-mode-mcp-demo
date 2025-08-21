@@ -57,7 +57,7 @@ figma.connect(CheckboxGroup, "<FIGMA_INPUTS_CHECKBOX_GROUP>");
 - [Figma Community File](https://www.figma.com/community/file/1380235722331273046/simple-design-system)を複製
 - このリポジトリをクローン
 - [figma.config.json](./figma.config.json)のURLをあなたのFigmaファイルを指すように更新
-  - 注：新しいコンポーネントを作成、切り離し、再作成しない限り、ファイルキー（例：`J0KLPKXiONDRssXD1AX9Oi`）のみがURLの変更箇所です。
+  - 注：新しいコンポーネントを作成、切り離し、再作成しない限り、ファイルキー（例：`xuauf1WnNBmOwjkjaFq7P2`）のみがURLの変更箇所です。
 - [Figma認証トークン](#figma認証)を作成・設定
 - この時点で、`npx figma connect publish`が動作し、新しいファイルがCode Connectを持つはずです。
 
