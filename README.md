@@ -1,40 +1,40 @@
 # Simple Design System (alpha)
 
-Using Figma's [Code Connect](https://github.com/figma/code-connect).
+Figmaの[Code Connect](https://github.com/figma/code-connect)を使用しています。
 
-Simple Design System (SDS) is a base design system that shows how Figma’s Variables, Styles, Components, and Code Connect can be used alongside a React codebase to form a complete picture of a responsive web design system.
+Simple Design System (SDS) は、Figmaの変数、スタイル、コンポーネント、Code Connectを Reactコードベースと組み合わせて、レスポンシブWebデザインシステムの完全な全体像を示すベースデザインシステムです。
 
-SDS is not just another design system in Figma. There are still many gaps between design and development, and SDS provides some best practices for how to bridge them. SDS tries to remain honest about its implications in code, while also offering customizability in design beyond the simple theming layer that is typical of many code-first component libraries.
+SDS は単なるFigmaの別のデザインシステムではありません。デザインと開発の間にはまだ多くのギャップがあり、SDSはそれらを埋めるためのベストプラクティスを提供します。SDSは、多くのコード優先コンポーネントライブラリに典型的なシンプルなテーマレイヤーを超えたデザインでのカスタマイズ性を提供しながら、コードでの意味についても正直であろうとしています。
 
-Whether you’re looking to use SDS to start a new project, or are looking for examples of some common design systems best practices, you'll find tools inside this codebase and design file to steer you in the right direction.
+SDSを使って新しいプロジェクトを始めようとしている場合でも、一般的なデザインシステムのベストプラクティスの例を探している場合でも、このコードベースとデザインファイル内のツールが正しい方向に導いてくれるでしょう。
 
-## Resources
+## リソース
 
 - [Storybook](https://figma.github.io/sds/storybook)
 - [Figma Community File](https://www.figma.com/community/file/1380235722331273046/simple-design-system)
 
-## Setup
+## セットアップ
 
-- `npm i` to install dependencies
-- `npm run app:dev` will run server at [localhost:8000](http://localhost:8000) which renders contents of [App.tsx](src/App.tsx)
-- `npm run storybook` to start storybook at [localhost:6006](http://localhost:6006)
+- `npm i` で依存関係をインストール
+- `npm run app:dev` で[localhost:8000](http://localhost:8000)でサーバーを起動し、[App.tsx](src/App.tsx)の内容をレンダリング
+- `npm run storybook` で[localhost:6006](http://localhost:6006)でStorybookを起動
 
-### Figma Auth
+### Figma認証
 
-- [Create a Figma API token](https://www.figma.com/developers/api#authentication)
-  - Add Code Connect scope
-  - Add File Read, Dev Resources Write, and Variables scopes if you want to use the integrations in [scripts](./scripts/)
-  - [More on scopes](https://www.figma.com/developers/api#authentication-scopes)
-- Duplicate [.env-rename](./.env-rename)
-- Rename it to `.env`, it will be ignored from git.
-  - Set `FIGMA_ACCESS_TOKEN=` as your token in `.env`
-  - Set `FIGMA_FILE_KEY=` as your file's key (grab it from the file URL) in `.env`
+- [Figma APIトークンを作成](https://www.figma.com/developers/api#authentication)
+  - Code Connectスコープを追加
+  - [scripts](./scripts/)で統合機能を使用したい場合は、File Read、Dev Resources Write、Variablesスコープを追加
+  - [スコープの詳細](https://www.figma.com/developers/api#authentication-scopes)
+- [.env-rename](./.env-rename)を複製
+- `.env`にリネーム（gitから除外されます）
+  - `.env`で`FIGMA_ACCESS_TOKEN=`にトークンを設定
+  - `.env`で`FIGMA_FILE_KEY=`にファイルのキー（ファイルURLから取得）を設定
 
 ### Code Connect
 
-SDS is fully backed by Figma's Code Connect. This includes examples for how to connect [primitives](./src/figma/primitives/), as well as [compositions](./src/figma/compositions/) of those primitives for your design system.
+SDSは完全にFigmaのCode Connectによってサポートされています。これには、デザインシステム用の[プリミティブ](./src/figma/primitives/)の接続方法の例と、それらのプリミティブの[コンポジション](./src/figma/compositions/)が含まれます。
 
-This repo utilizes `documentUrlSubstitutions` in [figma.config.json](./figma.config.json). This allows us to keep our docs Figma file-agnostic and colocates all the Figma file-specific information for easy url swapping. The document URL substitutions are also named in a way that helps you find the associated component without clicking a link. A key `<FIGMA_INPUTS_CHECKBOX_GROUP>` is broken down as `<FIGMA_[PAGE_NAME]_[COMPONENT_NAME]>`.
+このリポジトリは[figma.config.json](./figma.config.json)で`documentUrlSubstitutions`を使用しています。これにより、ドキュメントをFigmaファイルに依存しないようにし、すべてのFigmaファイル固有の情報を一箇所にまとめて、簡単にURL交換ができるようになります。ドキュメントURL置換は、リンクをクリックせずに関連コンポーネントを見つけられるように命名されています。キー`<FIGMA_INPUTS_CHECKBOX_GROUP>`は`<FIGMA_[ページ名]_[コンポーネント名]>`として分解されます。
 
 ```json
 {
@@ -44,96 +44,96 @@ This repo utilizes `documentUrlSubstitutions` in [figma.config.json](./figma.con
 }
 ```
 
-Allows us to have more expressive URLs in our Code Connect docs:
+Code Connectドキュメントでより表現力豊かなURLを使用できます：
 
 ```js
 figma.connect(CheckboxGroup, "<FIGMA_INPUTS_CHECKBOX_GROUP>");
 ```
 
-### Connecting this repo to a duplicated Figma file
+### このリポジトリを複製したFigmaファイルに接続する
 
-With the above in mind, a fresh clone of the Simple Design System Figma file should maintain all the node-ids. The steps should be as follows:
+上記を踏まえて、Simple Design System Figmaファイルの新しいクローンはすべてのnode-idを維持する必要があります。手順は以下の通りです：
 
-- Duplicate the [Figma Community File](https://www.figma.com/community/file/1380235722331273046/simple-design-system)
-- Clone this repo
-- Update urls in [figma.config.json](./figma.config.json) to point to your Figma file
-  - Note: the file keys (eg. `J0KLPKXiONDRssXD1AX9Oi`) should be the only change in the urls unless you're creating new components, detaching and recreating.
-- Create and set your [Figma Auth Token](#figma-auth)
-- At that point, `npx figma connect publish` should work and your new file should have Code Connect.
+- [Figma Community File](https://www.figma.com/community/file/1380235722331273046/simple-design-system)を複製
+- このリポジトリをクローン
+- [figma.config.json](./figma.config.json)のURLをあなたのFigmaファイルを指すように更新
+  - 注：新しいコンポーネントを作成、切り離し、再作成しない限り、ファイルキー（例：`J0KLPKXiONDRssXD1AX9Oi`）のみがURLの変更箇所です。
+- [Figma認証トークン](#figma認証)を作成・設定
+- この時点で、`npx figma connect publish`が動作し、新しいファイルがCode Connectを持つはずです。
 
-## Structure
+## 構造
 
-All components and styles are in [src/ui](./src/ui). Within that directory, code is broken down into a few categories.
+すべてのコンポーネントとスタイルは[src/ui](./src/ui)にあります。そのディレクトリ内で、コードはいくつかのカテゴリに分類されています。
 
 ### [src/ui/compositions](./src/ui/compositions/)
 
-Example arrangements of primitive components to demonstrate how you might use SDS to build a responsive website.
+SDSを使ってレスポンシブWebサイトを構築する方法を示すプリミティブコンポーネントの配置例。
 
 ### [src/ui/hooks](./src/ui/hooks/)
 
-Custom React hook definitions
+カスタムReactフック定義
 
 ### [src/ui/icons](./src/ui/icons/)
 
-All icon components. Automatically generated by [scripts/icons](./scripts/icons)
+すべてのアイコンコンポーネント。[scripts/icons](./scripts/icons)によって自動生成されます。
 
 ### [src/ui/images](./src/ui/images/)
 
-Placeholder images.
+プレースホルダー画像。
 
 ### [src/ui/layout](./src/ui/layout/)
 
-Layout components. Crucial to SDS layouts, but do not have analogous component in Figma.
+レイアウトコンポーネント。SDSレイアウトに不可欠ですが、Figmaに対応するコンポーネントはありません。
 
 ### [src/ui/primitives](./src/ui/primitives/)
 
-The main component library. SDS primitives can't be reduced further into sub components.
+メインコンポーネントライブラリ。SDSプリミティブはサブコンポーネントにさらに分解できません。
 
 ### [src/ui/providers](./src/ui/providers/)
 
-Custom React provider definitions
+カスタムReactプロバイダー定義
 
 ### [src/ui/utils](./src/ui/utils/)
 
-Custom utilities and utility components
+カスタムユーティリティとユーティリティコンポーネント
 
-### Code Connect and Storybook
+### Code ConnectとStorybook
 
-All Code Connect docs and Storybook stories follow the same categorization are defined in [src/figma](./src/figma) and [src/stories](./src/stories).
+すべてのCode ConnectドキュメントとStorybookストーリーは同じカテゴリ分けに従い、[src/figma](./src/figma)と[src/stories](./src/stories)で定義されています。
 
-## Scripts
+## スクリプト
 
-Some example integrations are available in `scripts` directory. They may require additional API scope that your org may or may not have access to. Where possible, there are some plugin examples to help fill gaps.
+`scripts`ディレクトリにいくつかの統合例があります。これらには、あなたの組織がアクセスできる場合とできない場合がある追加のAPIスコープが必要な場合があります。可能な場合は、ギャップを埋めるのに役立つプラグイン例もあります。
 
 ### [scripts/component-metadata](./scripts/component-metadata)
 
-- Scripts to run in the JS Console in Figma
-- Bulk manage descriptions for all components in the file. Instead of making a complicated plugin, you can do this more simply by running scripts directly from the JavaScript console.
-- Copy the contents of [scripts/component-metadata/exportComponentJSON.js](./scripts/component-metadata/exportComponentJSON.js) and run in the console with the file open.
-  - "Copy as object" the result and paste into [scripts/component-metadata/components.json](./scripts/component-metadata/components.json).
-- There you can modify descriptions more easily.
-- Once you have modified the descriptions, copy the JSON and paste at the top of [scripts/component-metadata/importComponentJSON.js](./scripts/component-metadata/importComponentJSON.js) as the value of the `json` variable.
-- Copy all the contents of the import file and run in the console to batch update descriptions for the entire file.
-- **This will only update the descriptions.** To update Dev Resources, you can use [scripts/dev-resources](#scriptsdev-resources).
+- FigmaのJSコンソールで実行するスクリプト
+- ファイル内のすべてのコンポーネントの説明を一括管理。複雑なプラグインを作る代わりに、JavaScriptコンソールから直接スクリプトを実行することで、より簡単にできます。
+- [scripts/component-metadata/exportComponentJSON.js](./scripts/component-metadata/exportComponentJSON.js)の内容をコピーし、ファイルを開いた状態でコンソールで実行。
+  - 結果を「オブジェクトとしてコピー」して[scripts/component-metadata/components.json](./scripts/component-metadata/components.json)に貼り付け。
+- そこで説明をより簡単に変更できます。
+- 説明を変更したら、JSONをコピーして[scripts/component-metadata/importComponentJSON.js](./scripts/component-metadata/importComponentJSON.js)の上部の`json`変数の値として貼り付け。
+- インポートファイルのすべての内容をコピーしてコンソールで実行し、ファイル全体の説明を一括更新。
+- **これは説明のみを更新します。** Dev Resourcesを更新するには、[scripts/dev-resources](#scriptsdev-resources)を使用できます。
 
 ### [scripts/dev-resources](./scripts/dev-resources)
 
-- `npm run script:dev-resources` (REST API only)
-- Sets dev resources for all components described in [scripts/dev-resources/devResources.mjs](./scripts/dev-resources/devResources.mjs) to match.
-- Useful when swapping urls in bulk. Requires `Dev Resources: Write` scope on your REST API token.
+- `npm run script:dev-resources`（REST APIのみ）
+- [scripts/dev-resources/devResources.mjs](./scripts/dev-resources/devResources.mjs)で記述されたすべてのコンポーネントのdev resourcesを一致するように設定。
+- URLを一括交換する際に便利。REST APIトークンに`Dev Resources: Write`スコープが必要。
 
 ### [scripts/icons](./scripts/icons)
 
 - `npm run script:icons:rest`
-- Gets all icons from the file, and generates components in the [src/ui/icons](./src/ui/icons) directory.
-- Also generates [src/figma/icons/Icons.figma.tsx](./src/figma/icons/Icons.figma.tsx) for Code Connect.
+- ファイルからすべてのアイコンを取得し、[src/ui/icons](./src/ui/icons)ディレクトリにコンポーネントを生成。
+- Code Connect用に[src/figma/icons/Icons.figma.tsx](./src/figma/icons/Icons.figma.tsx)も生成。
 
 ### [scripts/tokens](./scripts/tokens)
 
 - `npm run script:tokens:rest`
-- Gets all variables and styles from Figma, and converts them to [src/theme.css](./src/theme.css).
-- Creates [scripts/tokens/tokensCodeSyntaxes.js](./scripts/tokens/tokensCodeSyntaxes.js) which is a script you can run in the JS console in Figma to update all the variable's [codeSyntaxes](https://www.figma.com/plugin-docs/api/Variable/#codesyntax) with CSS that matches this repo.
-- Includes some example plugins for how to get the same data without the Variables REST API.
-  - [Install plugins](https://www.figma.com/plugin-docs/plugin-quickstart-guide/) in Development
-  - Run plugins, and copy plugin outputs into [scripts/tokens/styles.json](./scripts/tokens/styles.json) and [scripts/tokens/tokens.json](./scripts/tokens/tokens.json)
-  - Run `npm run script:tokens` (without `:rest`) and it will reference the JSON files directly without making a REST API request to update them
+- Figmaからすべての変数とスタイルを取得し、[src/theme.css](./src/theme.css)に変換。
+- [scripts/tokens/tokensCodeSyntaxes.js](./scripts/tokens/tokensCodeSyntaxes.js)を作成。これはFigmaのJSコンソールで実行して、このリポジトリに一致するCSSですべての変数の[codeSyntaxes](https://www.figma.com/plugin-docs/api/Variable/#codesyntax)を更新するスクリプト。
+- Variables REST APIを使わずに同じデータを取得する方法のプラグイン例を含む。
+  - Developmentで[プラグインをインストール](https://www.figma.com/plugin-docs/plugin-quickstart-guide/)
+  - プラグインを実行し、プラグイン出力を[scripts/tokens/styles.json](./scripts/tokens/styles.json)と[scripts/tokens/tokens.json](./scripts/tokens/tokens.json)にコピー
+  - `npm run script:tokens`（`:rest`なし）を実行すると、REST APIリクエストを行わずにJSONファイルを直接参照して更新
