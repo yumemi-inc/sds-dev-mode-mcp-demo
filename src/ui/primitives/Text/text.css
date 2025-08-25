@@ -27,9 +27,6 @@
   font: var(--sds-font-body-link);
   position: relative;
   /* Override */
-  &.link {
-    text-decoration: underline;
-  }
   &:focus-visible {
     outline: none;
     --offset: calc(var(--sds-size-stroke-border) * 2);

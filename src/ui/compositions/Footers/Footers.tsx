@@ -1,5 +1,5 @@
 import { useMediaQuery } from "hooks";
-import { IconInstagram, IconLinkedin, IconTwitter, IconYoutube } from "icons";
+import { IconInstagram, IconLinkedin, IconX, IconYoutube } from "icons";
 import { Flex, FlexItem, Section, type SectionProps } from "layout";
 import {
   ButtonGroup,
@@ -18,7 +18,7 @@ export function Footer({ className, ...props }: FooterProps) {
   return (
     <Section
       elementType="footer"
-      variant="brand"
+      variant="stroke"
       paddingTop="1600"
       paddingBottom="4000"
       style={{ marginTop: "auto" }}
@@ -30,29 +30,36 @@ export function Footer({ className, ...props }: FooterProps) {
             <FlexItem>
               <Logo className="footer-logo" />
             </FlexItem>
-            <TextLinkList density={listDensity}>
-              <TextListItem>
-                <TextLink href="https://www.figma.com">figma.com</TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://www.x.com/figma">X</TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://instagram.com/figma">
-                  Instagram
-                </TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://www.youtube.com/@Figma">
-                  YouTube
-                </TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://www.linkedin.com/company/figma/">
-                  LinkedIn
-                </TextLink>
-              </TextListItem>
-            </TextLinkList>
+            <Flex direction="row" gap="200" alignSecondary="start">
+              <IconButton
+                variant="subtle"
+                aria-label="Twitter"
+                href="https://www.x.com/figma"
+              >
+                <IconX size="24" />
+              </IconButton>
+              <IconButton
+                variant="subtle"
+                aria-label="Instagram"
+                href="https://instagram.com/figma"
+              >
+                <IconInstagram size="24" />
+              </IconButton>
+              <IconButton
+                variant="subtle"
+                aria-label="YouTube"
+                href="https://www.youtube.com/@Figma"
+              >
+                <IconYoutube size="24" />
+              </IconButton>
+              <IconButton
+                variant="subtle"
+                aria-label="LinkedIn"
+                href="https://www.linkedin.com/company/figma/"
+              >
+                <IconLinkedin size="24" />
+              </IconButton>
+            </Flex>
           </Flex>
         </FlexItem>
         <TextLinkList
@@ -146,7 +153,7 @@ export function SocialButtons() {
         aria-label="Twitter"
         href="https://www.twitter.com"
       >
-        <IconTwitter />
+        <IconX />
       </IconButton>
       <IconButton
         variant="subtle"
