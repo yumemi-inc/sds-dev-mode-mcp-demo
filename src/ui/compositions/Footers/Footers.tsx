@@ -1,5 +1,5 @@
 import { useMediaQuery } from "hooks";
-import { IconInstagram, IconLinkedin, IconX, IconYoutube } from "icons";
+import { IconInstagram, IconLinkedin, IconTwitter,  IconYoutube } from "icons";
 import { Flex, FlexItem, Section, type SectionProps } from "layout";
 import {
   ButtonGroup,
@@ -30,35 +30,11 @@ export function Footer({ className, ...props }: FooterProps) {
             <FlexItem>
               <Logo className="footer-logo" />
             </FlexItem>
-            <Flex direction="row" gap="200" alignSecondary="start">
-              <IconButton
-                variant="subtle"
-                aria-label="Twitter"
-                href="https://www.x.com/figma"
-              >
-                <IconX size="24" />
-              </IconButton>
-              <IconButton
-                variant="subtle"
-                aria-label="Instagram"
-                href="https://instagram.com/figma"
-              >
-                <IconInstagram size="24" />
-              </IconButton>
-              <IconButton
-                variant="subtle"
-                aria-label="YouTube"
-                href="https://www.youtube.com/@Figma"
-              >
-                <IconYoutube size="24" />
-              </IconButton>
-              <IconButton
-                variant="subtle"
-                aria-label="LinkedIn"
-                href="https://www.linkedin.com/company/figma/"
-              >
-                <IconLinkedin size="24" />
-              </IconButton>
+            <Flex direction="row" gap="400" alignSecondary="start">
+              <IconTwitter size="24" />
+              <IconInstagram size="24" />
+              <IconYoutube size="24" />
+              <IconLinkedin size="24" />
             </Flex>
           </Flex>
         </FlexItem>
@@ -153,7 +129,7 @@ export function SocialButtons() {
         aria-label="Twitter"
         href="https://www.twitter.com"
       >
-        <IconX />
+        <IconTwitter />
       </IconButton>
       <IconButton
         variant="subtle"
