@@ -36,6 +36,12 @@ export function PricingGrid() {
               >
                 Yearly
               </NavigationPill>
+              <NavigationPill
+                onPress={() => setPricingInterval("link")}
+                isSelected={pricingInterval === "link"}
+              >
+                Link
+              </NavigationPill>
             </Navigation>
           </Flex>
         </FlexItem>
