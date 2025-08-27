@@ -41,7 +41,7 @@ export function HeaderAuth() {
           })
         }
       >
-        Log in
+        Sign in
       </Button>
       <Button
         size="small"
@@ -60,11 +60,13 @@ export function HeaderAuth() {
   const { isTabletDown } = useMediaQuery();
 
   const navItems = [
-    "Pricing",
-    "Solutions",
+    "Products",
+    "Solutions", 
     "Community",
     "Resources",
+    "Pricing",
     "Contact",
+    "Link",
   ];
 
   const navigation = (
@@ -136,7 +138,7 @@ export function HeaderAuth() {
                             size="small"
                             onPress={logout}
                           >
-                            Log out
+                            Sign out
                           </Button>
                         </Flex>
                       </FlexItem>
@@ -167,7 +169,7 @@ export function HeaderAuth() {
                         />
                       </AvatarBlock>
                     </MenuItem>
-                    <MenuItem onAction={logout}>Log out</MenuItem>
+                    <MenuItem onAction={logout}>Sign out</MenuItem>
                   </Menu>
                 </MenuPopover>
               </MenuTrigger>

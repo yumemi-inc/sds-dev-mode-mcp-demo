@@ -1,5 +1,5 @@
 import { useMediaQuery } from "hooks";
-import { IconInstagram, IconLinkedin, IconTwitter, IconYoutube } from "icons";
+import { IconInstagram, IconLinkedin, IconTwitter,  IconYoutube } from "icons";
 import { Flex, FlexItem, Section, type SectionProps } from "layout";
 import {
   ButtonGroup,
@@ -18,7 +18,7 @@ export function Footer({ className, ...props }: FooterProps) {
   return (
     <Section
       elementType="footer"
-      variant="brand"
+      variant="stroke"
       paddingTop="1600"
       paddingBottom="4000"
       style={{ marginTop: "auto" }}
@@ -30,29 +30,12 @@ export function Footer({ className, ...props }: FooterProps) {
             <FlexItem>
               <Logo className="footer-logo" />
             </FlexItem>
-            <TextLinkList density={listDensity}>
-              <TextListItem>
-                <TextLink href="https://www.figma.com">figma.com</TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://www.x.com/figma">X</TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://instagram.com/figma">
-                  Instagram
-                </TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://www.youtube.com/@Figma">
-                  YouTube
-                </TextLink>
-              </TextListItem>
-              <TextListItem>
-                <TextLink href="https://www.linkedin.com/company/figma/">
-                  LinkedIn
-                </TextLink>
-              </TextListItem>
-            </TextLinkList>
+            <Flex direction="row" gap="400" alignSecondary="start">
+              <IconTwitter size="24" />
+              <IconInstagram size="24" />
+              <IconYoutube size="24" />
+              <IconLinkedin size="24" />
+            </Flex>
           </Flex>
         </FlexItem>
         <TextLinkList

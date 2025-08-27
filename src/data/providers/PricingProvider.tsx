@@ -21,7 +21,7 @@ export function PricingProvider({ children }: { children?: ReactNode }) {
         const { monthly, annual } = await pricingService.getPlans();
         setMonthlyPlans(monthly);
         setAnnualPlans(annual);
-        setCurrentPlan(monthly[0]);
+        setCurrentPlan(monthly[1]);
       } catch (err) {
       } finally {
         setIsLoading(false);

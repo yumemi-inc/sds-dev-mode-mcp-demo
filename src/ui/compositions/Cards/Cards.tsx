@@ -171,17 +171,7 @@ export function pricingPlanToPricingCardProps(
   const levelDowngrade = levelCurrent && levelCurrent > level;
   const goAnnual = levelCurrent === level && currentPlan?.interval === "month";
   const goMonthly = levelCurrent === level && currentPlan?.interval === "year";
-  const action = isActive
-    ? "Current Plan"
-    : levelUpgrade
-      ? `Upgrade to ${plan.name}`
-      : levelDowngrade
-        ? `Downgrade to ${plan.name}`
-        : goAnnual
-          ? `Go Annual`
-          : goMonthly
-            ? `Go Monthly`
-            : `Select ${plan.name}`;
+  const action = "Button";
   return {
     sku: plan.sku,
     interval: plan.interval,
