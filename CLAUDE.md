@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Communication Language
+
+**Always communicate in Japanese (日本語) when working in this repository.** All responses, explanations, and documentation should be provided in Japanese to match the team's preferred language.
+
 ## Commands
 
 ### Development
