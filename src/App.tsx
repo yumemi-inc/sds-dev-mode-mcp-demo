@@ -2,7 +2,6 @@ import { Footer, Header, Hero } from "compositions";
 import { AllProviders } from "data";
 import { TextContentTitle } from "primitives";
 import { FAQs } from "./examples/FAQs";
-import { PricingGrid } from "./examples/PricingGrid";
 
 function App() {
   return (
@@ -15,7 +14,6 @@ function App() {
           subtitle="Subtitle"
         />
       </Hero>
-      <PricingGrid />
       <FAQs />
       <Footer />
     </AllProviders>

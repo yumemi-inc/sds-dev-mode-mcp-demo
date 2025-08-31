@@ -1,7 +1,4 @@
 import { figma } from "@figma/code-connect";
-import { PricingCard, pricingPlanToPricingCardProps } from "compositions";
-import { usePricing } from "data";
-import { useMediaQuery } from "hooks";
 import { Flex, FlexItem, Section } from "layout";
 
 figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_ICON>", {
@@ -86,37 +83,6 @@ figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_IMAGE>", {
       </Flex>
     </Section>
   ),
-});
-
-figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_PRICING>", {
-  props: {
-    schedule: figma.children("Navigation Pill List"),
-  },
-  example: ({ schedule }) => {
-    const { monthlyPlans } = usePricing();
-    const { isMobile } = useMediaQuery();
-    const padding = isMobile ? "600" : "1200";
-    const gap = isMobile ? "600" : "1200";
-    const gapCards = isMobile ? "600" : "1200";
-    const size = isMobile ? "small" : "large";
-
-    return (
-      <Section padding={padding}>
-        <Flex container direction="column" gap={gap}>
-          {schedule}
-          <Flex container direction="row" gap={gapCards}>
-            {monthlyPlans.map((option, i) => (
-              <PricingCard
-                key={option.sku}
-                size={size}
-                {...pricingPlanToPricingCardProps(option, i)}
-              />
-            ))}
-          </Flex>
-        </Flex>
-      </Section>
-    );
-  },
 });
 
 figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_REVIEWS>", {
