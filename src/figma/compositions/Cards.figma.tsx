@@ -1,14 +1,13 @@
 import { figma } from "@figma/code-connect";
 import {
   Card,
-  PricingCard,
   ProductInfoCard,
   ReviewCard,
   StatsCard,
   TestimonialCard,
 } from "compositions";
 import { placeholder } from "images";
-import { ButtonProps, Image, Text, TextHeading } from "primitives";
+import { Image, Text, TextHeading } from "primitives";
 
 figma.connect(Card, "<FIGMA_CARDS_CARD>", {
   props: {
@@ -36,57 +35,6 @@ figma.connect(Card, "<FIGMA_CARDS_CARD>", {
   ),
 });
 
-figma.connect(PricingCard, "<FIGMA_CARDS_PRICING_CARD>", {
-  props: {
-    textHeading: figma.nestedProps("Text Heading", {
-      text: figma.string("Text"),
-    }),
-    action: figma.nestedProps<{
-      label: string;
-      variant: ButtonProps["variant"];
-      icon?: React.ReactNode;
-    }>("Button", {
-      label: figma.string("Label"),
-      variant: figma.enum("Variant", {
-        Primary: "primary",
-        Neutral: "neutral",
-        Subtle: "subtle",
-      }),
-      icon: figma.instance("Icon End"),
-    }),
-    textPrice: figma.nestedProps("Text Price", {
-      price: figma.string("Price"),
-      priceCurrency: figma.string("Currency"),
-      priceLabel: figma.string("Label"),
-      size: figma.enum("Size", {
-        Large: "large",
-        Small: "small",
-      }),
-    }),
-    list: figma.children("Text List"),
-    variant: figma.enum("Variant", {
-      Stroke: "stroke",
-      Brand: "brand",
-    }),
-  },
-  example: ({ textHeading, textPrice, list, action, ...props }) => (
-    <PricingCard
-      heading={textHeading.text}
-      action={action.label}
-      actionIcon={action.icon}
-      actionVariant={action.variant}
-      onAction={() => {}}
-      listSlot={list}
-      interval="month"
-      sku="example_sku"
-      price={textPrice.price}
-      priceCurrency={textPrice.priceCurrency}
-      priceLabel={textPrice.priceLabel}
-      size={textPrice.size}
-      {...props}
-    />
-  ),
-});
 
 figma.connect(ProductInfoCard, "<FIGMA_CARDS_PRODUCT_INFO_CARD>", {
   props: {

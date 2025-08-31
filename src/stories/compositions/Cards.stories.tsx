@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import {
   Card,
-  PricingCard,
   ProductInfoCard,
   ReviewCard,
   StatsCard,
@@ -86,53 +85,6 @@ export const StoryCard: StoryObj<
         <Button variant="neutral">Hello there!</Button>
       </ButtonGroup>
     </Card>
-  ),
-};
-
-export const StoryPricingCard: StoryObj<typeof PricingCard> = {
-  name: "Pricing Card",
-  render: () => (
-    <Flex
-      container
-      wrap
-      gap="400"
-      type="third"
-      alignPrimary="center"
-      direction="row"
-    >
-      {[1, 2, 3].map((i) => (
-        <PricingCard
-          key={i}
-          variant={i === 2 ? "brand" : undefined}
-          heading="Wow Tier"
-          action="Buy this"
-          price={(5 * (5 - i)).toString()}
-          priceCurrency="$"
-          size="large"
-          sku={`sku-${i}`}
-          interval="month"
-          onAction={() => {}}
-          actionVariant={i === 2 ? "neutral" : undefined}
-          list={["List item 1", "List item 2", "List item 3"]}
-        />
-      ))}
-      {[1, 2, 3].map((i) => (
-        <PricingCard
-          key={i}
-          variant={i === 2 ? "brand" : undefined}
-          heading="Wow Tier"
-          action="Buy this"
-          price={(5 * (5 - i)).toString()}
-          priceCurrency="$"
-          size="small"
-          sku={`sku-${i}`}
-          interval="year"
-          onAction={() => {}}
-          actionVariant={i === 2 ? "neutral" : undefined}
-          list={["List item 1", "List item 2", "List item 3"]}
-        />
-      ))}
-    </Flex>
   ),
 };
 

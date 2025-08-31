@@ -24,7 +24,7 @@ figma.connect(NavigationPill, "<FIGMA_NAVIGATION_NAVIGATION_PILL>", {
     }),
   },
   example: ({ label, ...props }) => (
-    <NavigationPill {...props}>{label}</NavigationPill>
+    <NavigationPill {...props} onPress={() => {}}>{label}</NavigationPill>
   ),
 });
 

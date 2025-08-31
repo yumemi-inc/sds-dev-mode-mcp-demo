@@ -4,7 +4,7 @@ import { Flex, FlexItem, Section } from "layout";
 figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_ICON>", {
   props: {
     gap: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
-    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
+    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600", "Extra Large": "1600", "Ultra Large": "4000" }),
     top: figma.children("Text Content Heading"),
     cards: figma.children("Card"),
   },
@@ -25,7 +25,7 @@ figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_ICON>", {
 figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_TESTIMONIALS>", {
   props: {
     gap: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
-    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
+    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600", "Extra Large": "1600", "Ultra Large": "4000" }),
     top: figma.children("Text Content Heading"),
     cards: figma.children("Testimonial Card"),
   },
@@ -46,7 +46,7 @@ figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_TESTIMONIALS>", {
 figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_CONTENT_LIST>", {
   props: {
     gap: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
-    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
+    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600", "Extra Large": "1600", "Ultra Large": "4000" }),
     top: figma.children("Text Content Heading"),
     cards: figma.children("Card"),
   },
@@ -67,7 +67,7 @@ figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_CONTENT_LIST>", {
 figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_IMAGE>", {
   props: {
     gap: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
-    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
+    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600", "Extra Large": "1600", "Ultra Large": "4000" }),
     top: figma.children("Text Content Heading"),
     cards: figma.children("Card"),
   },
@@ -85,10 +85,11 @@ figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_IMAGE>", {
   ),
 });
 
+
 figma.connect(Section, "<FIGMA_SECTIONS_CARD_GRID_REVIEWS>", {
   props: {
     gap: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
-    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600" }),
+    padding: figma.enum("Platform", { Desktop: "1200", Mobile: "600", "Extra Large": "1600", "Ultra Large": "4000" }),
     top: figma.children("Text Heading"),
     cards: figma.children("Review Card"),
   },
