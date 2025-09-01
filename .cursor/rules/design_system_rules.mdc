@@ -1,0 +1,1167 @@
+---
+description: This document provides comprehensive rules and guidelines for integrating designs into code using the Figma Model Context Protocol (MCP) tool.
+alwaysApply: false
+---
+# デザインシステムルール - Figma MCP統合ガイド
+
+このドキュメントは、Figma Model Context Protocol (MCP) ツールを使用してデザインをコードに統合する際の包括的なルールとガイドラインを提供します。
+
+## 1. デザイントークン定義
+
+### トークンファイルの場所と構造
+
+**主要なトークンファイル：**
+```css
+/* src/theme.css - Figmaから自動生成されるメインのトークンファイル */
+:root {
+  /* Color Primitives - プリミティブな色の定義 */
+  --sds-color-brand-100: #f5f5f5;
+  --sds-color-brand-800: #2c2c2c;
+  
+  /* Semantic Colors - 用途別の色定義 */
+  --sds-color-background-brand-default: var(--sds-color-brand-800);
+  --sds-color-text-brand-default: var(--sds-color-brand-800);
+  
+  /* Typography Tokens - タイポグラフィ定義 */
+  --sds-typography-family-sans: "inter", sans-serif;
+  --sds-typography-scale-03: 1rem;
+  
+  /* Spacing & Size Tokens - スペースとサイズ定義 */
+  --sds-size-space-400: 1rem;
+  --sds-size-radius-100: 0.25rem;
+  
+  /* Composed Font Styles - 組み合わせフォントスタイル */
+  --sds-font-body-base: normal var(--sds-typography-body-font-weight-regular) var(--sds-typography-body-size-medium) var(--sds-typography-body-font-family);
+}
+```
+
+**トークンの命名規則：**
+- プレフィックス: `--sds-`
+- カテゴリ: `color`, `typography`, `size`, `font`
+- 用途・階層: `background`, `text`, `icon` / `brand`, `default`, `danger`
+- バリエーション: `default`, `hover`, `primary`, `secondary`
+
+**ダークモード対応：**
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* ダークモード専用のトークン定義 */
+    --sds-color-background-brand-default: var(--sds-color-brand-100);
+  }
+}
+```
+
+### トークンの自動更新システム
+
+**Figmaからのトークン同期:**
+```bash
+# .envファイルにFigmaトークンを設定後
+npm run script:tokens  # Figmaからトークンを同期
+```
+
+**生成元ファイル:**
+- `scripts/tokens/tokens.json` - Figmaから取得したトークンの生JSON
+- `src/theme.css` - CSSカスタムプロパティとして変換されたトークン
+
+## 2. コンポーネントライブラリ構造
+
+### コンポーネント階層とアーキテクチャ
+
+```
+src/ui/
+├── primitives/     # 原子的コンポーネント
+│   ├── Button/
+│   │   ├── Button.tsx
+│   │   └── button.css
+│   ├── Input/
+│   ├── Text/
+│   └── index.ts    # 全primitiveコンポーネントのエクスポート
+├── compositions/   # 複合パターンコンポーネント
+│   ├── Headers/
+│   ├── Forms/
+│   ├── Cards/
+│   └── index.ts
+├── layout/         # レイアウトコンポーネント
+│   ├── Flex/
+│   ├── Section/
+│   ├── Grid/
+│   └── index.ts
+├── icons/          # Figmaから自動生成されるアイコン
+│   ├── IconActivity.tsx
+│   ├── IconButton.tsx
+│   └── index.ts
+├── hooks/          # UI関連のカスタムフック
+└── utils/          # ユーティリティ関数
+```
+
+### React Aria Components使用パターン
+
+**基本的なコンポーネント実装:**
+```tsx
+// src/ui/primitives/Button/Button.tsx
+import { Button as RACButton, Link as RACLink } from "react-aria-components";
+import { clsx } from "clsx";
+import "./button.css";
+
+export const Button = React.forwardRef(function Button(
+  { className, size = "medium", variant = "primary", ...props },
+  ref
+) {
+  const classNames = clsx(
+    className,
+    "button",
+    `button-size-${size}`,
+    `button-variant-${variant}`
+  );
+
+  return isAnchorProps(props) ? (
+    <RACLink {...sharedProps} className={classNames} ref={ref}>
+      {props.children}
+    </RACLink>
+  ) : (
+    <RACButton {...sharedProps} className={classNames} ref={ref}>
+      {props.children}
+    </RACButton>
+  );
+});
+```
+
+### CSS実装パターン
+
+**CSSクラス命名規則:**
+```css
+/* コンポーネント名-プロパティ名-値 の形式 */
+.button-size-medium { /* サイズバリエーション */ }
+.button-variant-primary { /* バリアントバリエーション */ }
+.button-group-align-center { /* グループ配置 */ }
+```
+
+**デザイントークンの使用:**
+```css
+.button {
+  font: var(--sds-font-body-base);
+  padding: var(--sds-size-space-200) var(--sds-size-space-400);
+  border-radius: var(--sds-size-radius-100);
+}
+
+.button-variant-primary {
+  background: var(--sds-color-background-brand-default);
+  color: var(--sds-color-text-brand-on-brand);
+}
+
+.button-variant-primary:hover {
+  background: var(--sds-color-background-brand-hover);
+}
+```
+
+## 3. フレームワーク・ライブラリ構成
+
+### 技術スタック
+
+**コアフレームワーク:**
+- React 18.2.0 + TypeScript
+- Vite 6.3.5 (ビルドツール)
+- React Aria Components 1.10.1 (アクセシビリティ)
+
+**スタイリング:**
+- 純粋CSS + CSSカスタムプロパティ
+- CSS Modules未使用（グローバルCSS）
+- clsx for 条件付きクラス名
+
+**開発ツール:**
+- Storybook 8.6.12 (コンポーネントドキュメント)
+- ESLint + TypeScript ESLint
+- Prettier + prettier-plugin-organize-imports
+
+### インポートエイリアス設定
+
+**vite.config.ts と tsconfig.json:**
+```typescript
+// vite.config.ts
+export default defineConfig({
+  resolve: {
+    alias: {
+      compositions: path.resolve(__dirname, "./src/ui/compositions"),
+      data: path.resolve(__dirname, "./src/data"),
+      hooks: path.resolve(__dirname, "./src/ui/hooks"),
+      icons: path.resolve(__dirname, "./src/ui/icons"),
+      layout: path.resolve(__dirname, "./src/ui/layout"),
+      primitives: path.resolve(__dirname, "./src/ui/primitives"),
+      utils: path.resolve(__dirname, "./src/ui/utils"),
+    },
+  },
+});
+```
+
+**推奨インポートパターン:**
+```tsx
+// ✅ 推奨 - エイリアスを使用
+import { Button, Text, Dialog } from "primitives";
+import { Header, Footer } from "compositions";
+import { Flex, Section } from "layout";
+import { IconChevronLeft } from "icons";
+import { useMediaQuery } from "hooks";
+
+// ❌ 非推奨 - 相対パスや直接パス
+import { Button } from "../../../ui/primitives/Button/Button";
+import { Button } from "./src/ui/primitives/Button/Button";
+```
+
+## 4. アセット管理
+
+### 画像・メディアファイル
+
+**画像の配置:**
+```
+src/ui/images/
+├── index.ts        # 画像のエクスポート
+└── [画像ファイル]
+```
+
+**画像の使用パターン:**
+```tsx
+import { imageName } from "images";
+
+<Image src={imageName} alt="説明" />
+```
+
+### フォント管理
+
+**フォント定義:**
+```css
+/* src/theme.css */
+:root {
+  --sds-typography-family-sans: "inter", sans-serif;
+  --sds-typography-family-mono: "roboto mono", monospace;
+  --sds-typography-family-serif: "noto serif", serif;
+}
+
+body, button, textarea, input, select {
+  font: var(--sds-font-body-base);
+}
+```
+
+## 5. アイコンシステム
+
+### アイコン生成とFigma同期
+
+**Figmaからのアイコン同期:**
+```bash
+npm run script:icons  # Figmaからアイコンを同期
+```
+
+**生成されるアイコンファイル構造:**
+```
+src/ui/icons/
+├── IconActivity.tsx     # 個別アイコンコンポーネント
+├── IconButton.tsx
+├── IconChevronLeft.tsx
+├── ...
+└── index.ts            # 全アイコンのエクスポート
+```
+
+**アイコンコンポーネントの実装パターン:**
+```tsx
+// src/ui/icons/IconActivity.tsx
+import { IconProps, Icon } from "primitives";
+
+export const IconActivity = (props: IconProps) => (
+  <Icon {...props}>
+    <path 
+      d="M14.6666 8H12L9.99998 14L5.99998 2L3.99998 8H1.33331" 
+      stroke="var(--svg-stroke-color)" 
+      strokeWidth="1.6" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
+```
+
+### アイコンスタイリング
+
+**アイコンCSSクラス:**
+```css
+/* src/icons.css */
+.icon {
+  --icon-color: var(--sds-color-icon-brand-default);
+  --svg-stroke-color: var(--icon-color);
+  --svg-fill-color: var(--icon-color);
+  height: var(--icon-diameter);
+  width: var(--icon-diameter);
+}
+
+.icon-size-16 { --icon-diameter: var(--sds-typography-scale-03); }
+.icon-size-24 { --icon-diameter: var(--sds-size-icon-small); }
+.icon-size-32 { --icon-diameter: var(--sds-size-icon-medium); }
+```
+
+**アイコン使用パターン:**
+```tsx
+import { IconActivity, IconButton } from "icons";
+
+// 基本使用
+<IconActivity className="icon icon-size-24" />
+
+// IconButtonコンポーネント内での使用
+<IconButton>
+  <IconActivity />
+</IconButton>
+```
+
+## 6. スタイリングアプローチ
+
+### CSS方法論
+
+**グローバルCSS + BEMライクな命名:**
+```css
+/* コンポーネント単位でのCSS分割 */
+/* src/ui/primitives/Button/button.css */
+
+.button { /* ベーススタイル */ }
+.button-size-small { /* サイズバリエーション */ }
+.button-variant-primary { /* カラーバリエーション */ }
+```
+
+### レスポンシブデザイン
+
+**レスポンシブユーティリティ:**
+```css
+/* src/responsive.css から生成されるユーティリティクラス */
+.display-none-to-flex {
+  display: var(--sds-responsive-display-none-to-flex) !important;
+}
+.display-flex-to-none {
+  display: var(--sds-responsive-display-flex-to-none) !important;
+}
+```
+
+**モバイルファースト設計:**
+```css
+/* デフォルト（モバイル）スタイル */
+.component {
+  padding: var(--sds-size-space-200);
+}
+
+/* タブレット以上 */
+@media (min-width: 768px) {
+  .component {
+    padding: var(--sds-size-space-400);
+  }
+}
+```
+
+## 7. プロジェクト構造とパターン
+
+### ディレクトリ組織
+
+```
+/
+├── src/
+│   ├── data/                    # データレイヤー（状態管理・API）
+│   │   ├── contexts/           # Reactコンテキスト
+│   │   ├── providers/          # コンテキストプロバイダー
+│   │   ├── services/           # APIサービス
+│   │   ├── hooks/              # データ関連フック
+│   │   └── types/              # TypeScript型定義
+│   ├── ui/                     # UIレイヤー
+│   │   ├── primitives/         # 原子的コンポーネント
+│   │   ├── compositions/       # 複合コンポーネント
+│   │   ├── layout/            # レイアウトコンポーネント
+│   │   ├── icons/             # アイコンコンポーネント
+│   │   └── hooks/             # UI関連フック
+│   ├── figma/                  # Figma Code Connect定義
+│   │   ├── primitives/        # プリミティブコンポーネントのマッピング
+│   │   ├── compositions/      # 複合コンポーネントのマッピング
+│   │   └── icons/             # アイコンのマッピング
+│   ├── theme.css              # デザイントークン（自動生成）
+│   ├── icons.css              # アイコンスタイル
+│   ├── index.css              # グローバルスタイル
+│   ├── reset.css              # CSSリセット
+│   └── responsive.css         # レスポンシブユーティリティ
+├── scripts/                    # Figma同期スクリプト
+│   ├── tokens/                # トークン同期
+│   └── icons/                 # アイコン同期
+└── .env                       # Figma APIトークン設定
+```
+
+### 機能別組織パターン
+
+**データレイヤー分離:**
+```
+src/data/
+├── contexts/
+│   ├── AuthContext.tsx        # 認証状態
+│   ├── PricingContext.tsx     # 価格設定状態
+│   └── ProductsContext.tsx    # 商品状態
+├── providers/
+│   ├── AuthProvider.tsx       # 認証プロバイダー
+│   └── AllProviders.tsx       # 全プロバイダーの統合
+├── hooks/
+│   ├── useAuth.ts            # 認証フック
+│   ├── usePricing.ts         # 価格設定フック
+│   └── useProducts.ts        # 商品フック
+└── services/
+    ├── authService.ts        # 認証API
+    └── productsService.ts    # 商品API
+```
+
+## 8. Figma統合ワークフロー
+
+### Figma Code Connect設定
+
+**Code Connectファイルの構造:**
+```tsx
+// src/figma/primitives/Button.figma.tsx
+import { figma } from "@figma/code-connect";
+import { Button } from "../../ui/primitives/Button/Button";
+
+figma.connect(Button, "https://figma.com/design/...", {
+  props: {
+    variant: figma.enum("Variant", {
+      Primary: "primary",
+      Secondary: "neutral",
+      Subtle: "subtle",
+    }),
+    size: figma.enum("Size", {
+      Small: "small",
+      Medium: "medium",
+    }),
+    children: figma.textContent("Label"),
+  },
+  example: ({ variant, size, children }) => (
+    <Button variant={variant} size={size}>
+      {children}
+    </Button>
+  ),
+});
+```
+
+### Figma MCP統合での推奨フロー
+
+**1. デザイン分析フェーズ:**
+```tsx
+// Figmaデザインの確認
+const nodeImage = await figma.getImage(nodeId);
+const nodeMetadata = await figma.getMetadata(nodeId);
+const variableDefinitions = await figma.getVariableDefs(nodeId);
+```
+
+**2. コンポーネント実装フェーズ:**
+```tsx
+// 既存コンポーネントのマッピング確認
+const codeConnectMap = await figma.getCodeConnectMap(nodeId);
+
+// コンポーネントコード生成
+const generatedCode = await figma.getCode(nodeId);
+```
+
+**3. 実装時の確認点:**
+- エイリアスインポートの使用
+- デザイントークンの適用
+- React Aria Componentsの活用
+- 適切なCSS命名規則の遵守
+
+### デザイントークン更新フロー
+
+**定期的なトークン同期:**
+```bash
+# 1. Figmaからトークンを同期
+npm run script:tokens
+
+# 2. 変更を確認
+git diff src/theme.css
+
+# 3. アプリケーションをリビルド
+npm run app:build
+
+# 4. Storybookで視覚確認
+npm run storybook
+```
+
+## 9. 開発時の重要な原則
+
+### コンポーネント開発ガイドライン
+
+**1. 既存コンポーネントの優先使用:**
+```tsx
+// ✅ 推奨 - 既存SDSコンポーネントを使用
+import { Button, Text, Flex } from "primitives";
+import { Card } from "compositions";
+
+// ❌ 非推奨 - カスタムコンポーネントの作成
+const CustomButton = styled.button`...`;
+```
+
+**2. デザイントークンの必須使用:**
+```css
+/* ✅ 推奨 - トークンを使用 */
+.component {
+  color: var(--sds-color-text-default-default);
+  padding: var(--sds-size-space-400);
+  font: var(--sds-font-body-base);
+}
+
+/* ❌ 非推奨 - ハードコーディング */
+.component {
+  color: #333333;
+  padding: 16px;
+  font-family: Arial, sans-serif;
+}
+```
+
+**3. TypeScript型安全性の確保:**
+```tsx
+// 適切な型定義の使用
+import type { ButtonProps } from "primitives";
+
+interface CustomComponentProps extends ButtonProps {
+  customProp: string;
+}
+```
+
+### パフォーマンス考慮事項
+
+**1. 必要最小限のインポート:**
+```tsx
+// ✅ 推奨 - 名前付きインポート
+import { Button, Text } from "primitives";
+
+// ❌ 非推奨 - デフォルトインポート
+import Primitives from "primitives";
+```
+
+**2. CSS最適化:**
+```css
+/* トークンを使用した効率的なスタイリング */
+.component {
+  font: var(--sds-font-body-base); /* 複数プロパティを一度に設定 */
+}
+```
+
+## 10. Figma MCPツール使用時のベストプラクティス
+
+### ツール選択ガイド
+
+**`get_code` - コンポーネント実装時に最優先で使用**
+```tsx
+// Figmaデザインからコンポーネントコードを取得
+const componentCode = await figma.getCode(nodeId);
+```
+
+**`get_variable_defs` - トークンマッピング確認時**
+```tsx
+// デザイントークンの定義を確認
+const variables = await figma.getVariableDefs(nodeId);
+```
+
+**`get_image` - 視覚的な参考が必要な時**
+```tsx
+// デザインの視覚的確認
+const designImage = await figma.getImage(nodeId);
+```
+
+**`get_metadata` - 構造確認時（概要把握のみ）**
+```tsx
+// デザイン構造の概要確認（詳細実装前の調査用）
+const metadata = await figma.getMetadata(nodeId);
+```
+
+### 実装時の確認チェックリスト
+
+**コンポーネント実装後:**
+- [ ] 適切なインポートエイリアスを使用
+- [ ] デザイントークンで全てのスタイルを定義
+- [ ] React Aria Componentsの活用
+- [ ] TypeScript型安全性の確保
+- [ ] レスポンシブデザインの対応
+- [ ] アクセシビリティの配慮
+
+**統合前の最終確認:**
+- [ ] `npm run app:lint` でのコード品質チェック
+- [ ] `npm run app:build` でのビルド成功確認
+- [ ] Storybookでの視覚的確認
+- [ ] デザインとの視覚的整合性確認
+
+このルールドキュメントに従って、Figma MCPツールを効果的に活用し、一貫性のあるデザインシステムを構築してください。# デザインシステムルール - Figma MCP統合ガイド
+
+このドキュメントは、Figma Model Context Protocol (MCP) ツールを使用してデザインをコードに統合する際の包括的なルールとガイドラインを提供します。
+
+## 1. デザイントークン定義
+
+### トークンファイルの場所と構造
+
+**主要なトークンファイル：**
+```css
+/* src/theme.css - Figmaから自動生成されるメインのトークンファイル */
+:root {
+  /* Color Primitives - プリミティブな色の定義 */
+  --sds-color-brand-100: #f5f5f5;
+  --sds-color-brand-800: #2c2c2c;
+  
+  /* Semantic Colors - 用途別の色定義 */
+  --sds-color-background-brand-default: var(--sds-color-brand-800);
+  --sds-color-text-brand-default: var(--sds-color-brand-800);
+  
+  /* Typography Tokens - タイポグラフィ定義 */
+  --sds-typography-family-sans: "inter", sans-serif;
+  --sds-typography-scale-03: 1rem;
+  
+  /* Spacing & Size Tokens - スペースとサイズ定義 */
+  --sds-size-space-400: 1rem;
+  --sds-size-radius-100: 0.25rem;
+  
+  /* Composed Font Styles - 組み合わせフォントスタイル */
+  --sds-font-body-base: normal var(--sds-typography-body-font-weight-regular) var(--sds-typography-body-size-medium) var(--sds-typography-body-font-family);
+}
+```
+
+**トークンの命名規則：**
+- プレフィックス: `--sds-`
+- カテゴリ: `color`, `typography`, `size`, `font`
+- 用途・階層: `background`, `text`, `icon` / `brand`, `default`, `danger`
+- バリエーション: `default`, `hover`, `primary`, `secondary`
+
+**ダークモード対応：**
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* ダークモード専用のトークン定義 */
+    --sds-color-background-brand-default: var(--sds-color-brand-100);
+  }
+}
+```
+
+### トークンの自動更新システム
+
+**Figmaからのトークン同期:**
+```bash
+# .envファイルにFigmaトークンを設定後
+npm run script:tokens  # Figmaからトークンを同期
+```
+
+**生成元ファイル:**
+- `scripts/tokens/tokens.json` - Figmaから取得したトークンの生JSON
+- `src/theme.css` - CSSカスタムプロパティとして変換されたトークン
+
+## 2. コンポーネントライブラリ構造
+
+### コンポーネント階層とアーキテクチャ
+
+```
+src/ui/
+├── primitives/     # 原子的コンポーネント
+│   ├── Button/
+│   │   ├── Button.tsx
+│   │   └── button.css
+│   ├── Input/
+│   ├── Text/
+│   └── index.ts    # 全primitiveコンポーネントのエクスポート
+├── compositions/   # 複合パターンコンポーネント
+│   ├── Headers/
+│   ├── Forms/
+│   ├── Cards/
+│   └── index.ts
+├── layout/         # レイアウトコンポーネント
+│   ├── Flex/
+│   ├── Section/
+│   ├── Grid/
+│   └── index.ts
+├── icons/          # Figmaから自動生成されるアイコン
+│   ├── IconActivity.tsx
+│   ├── IconButton.tsx
+│   └── index.ts
+├── hooks/          # UI関連のカスタムフック
+└── utils/          # ユーティリティ関数
+```
+
+### React Aria Components使用パターン
+
+**基本的なコンポーネント実装:**
+```tsx
+// src/ui/primitives/Button/Button.tsx
+import { Button as RACButton, Link as RACLink } from "react-aria-components";
+import { clsx } from "clsx";
+import "./button.css";
+
+export const Button = React.forwardRef(function Button(
+  { className, size = "medium", variant = "primary", ...props },
+  ref
+) {
+  const classNames = clsx(
+    className,
+    "button",
+    `button-size-${size}`,
+    `button-variant-${variant}`
+  );
+
+  return isAnchorProps(props) ? (
+    <RACLink {...sharedProps} className={classNames} ref={ref}>
+      {props.children}
+    </RACLink>
+  ) : (
+    <RACButton {...sharedProps} className={classNames} ref={ref}>
+      {props.children}
+    </RACButton>
+  );
+});
+```
+
+### CSS実装パターン
+
+**CSSクラス命名規則:**
+```css
+/* コンポーネント名-プロパティ名-値 の形式 */
+.button-size-medium { /* サイズバリエーション */ }
+.button-variant-primary { /* バリアントバリエーション */ }
+.button-group-align-center { /* グループ配置 */ }
+```
+
+**デザイントークンの使用:**
+```css
+.button {
+  font: var(--sds-font-body-base);
+  padding: var(--sds-size-space-200) var(--sds-size-space-400);
+  border-radius: var(--sds-size-radius-100);
+}
+
+.button-variant-primary {
+  background: var(--sds-color-background-brand-default);
+  color: var(--sds-color-text-brand-on-brand);
+}
+
+.button-variant-primary:hover {
+  background: var(--sds-color-background-brand-hover);
+}
+```
+
+## 3. フレームワーク・ライブラリ構成
+
+### 技術スタック
+
+**コアフレームワーク:**
+- React 18.2.0 + TypeScript
+- Vite 6.3.5 (ビルドツール)
+- React Aria Components 1.10.1 (アクセシビリティ)
+
+**スタイリング:**
+- 純粋CSS + CSSカスタムプロパティ
+- CSS Modules未使用（グローバルCSS）
+- clsx for 条件付きクラス名
+
+**開発ツール:**
+- Storybook 8.6.12 (コンポーネントドキュメント)
+- ESLint + TypeScript ESLint
+- Prettier + prettier-plugin-organize-imports
+
+### インポートエイリアス設定
+
+**vite.config.ts と tsconfig.json:**
+```typescript
+// vite.config.ts
+export default defineConfig({
+  resolve: {
+    alias: {
+      compositions: path.resolve(__dirname, "./src/ui/compositions"),
+      data: path.resolve(__dirname, "./src/data"),
+      hooks: path.resolve(__dirname, "./src/ui/hooks"),
+      icons: path.resolve(__dirname, "./src/ui/icons"),
+      layout: path.resolve(__dirname, "./src/ui/layout"),
+      primitives: path.resolve(__dirname, "./src/ui/primitives"),
+      utils: path.resolve(__dirname, "./src/ui/utils"),
+    },
+  },
+});
+```
+
+**推奨インポートパターン:**
+```tsx
+// ✅ 推奨 - エイリアスを使用
+import { Button, Text, Dialog } from "primitives";
+import { Header, Footer } from "compositions";
+import { Flex, Section } from "layout";
+import { IconChevronLeft } from "icons";
+import { useMediaQuery } from "hooks";
+
+// ❌ 非推奨 - 相対パスや直接パス
+import { Button } from "../../../ui/primitives/Button/Button";
+import { Button } from "./src/ui/primitives/Button/Button";
+```
+
+## 4. アセット管理
+
+### 画像・メディアファイル
+
+**画像の配置:**
+```
+src/ui/images/
+├── index.ts        # 画像のエクスポート
+└── [画像ファイル]
+```
+
+**画像の使用パターン:**
+```tsx
+import { imageName } from "images";
+
+<Image src={imageName} alt="説明" />
+```
+
+### フォント管理
+
+**フォント定義:**
+```css
+/* src/theme.css */
+:root {
+  --sds-typography-family-sans: "inter", sans-serif;
+  --sds-typography-family-mono: "roboto mono", monospace;
+  --sds-typography-family-serif: "noto serif", serif;
+}
+
+body, button, textarea, input, select {
+  font: var(--sds-font-body-base);
+}
+```
+
+## 5. アイコンシステム
+
+### アイコン生成とFigma同期
+
+**Figmaからのアイコン同期:**
+```bash
+npm run script:icons  # Figmaからアイコンを同期
+```
+
+**生成されるアイコンファイル構造:**
+```
+src/ui/icons/
+├── IconActivity.tsx     # 個別アイコンコンポーネント
+├── IconButton.tsx
+├── IconChevronLeft.tsx
+├── ...
+└── index.ts            # 全アイコンのエクスポート
+```
+
+**アイコンコンポーネントの実装パターン:**
+```tsx
+// src/ui/icons/IconActivity.tsx
+import { IconProps, Icon } from "primitives";
+
+export const IconActivity = (props: IconProps) => (
+  <Icon {...props}>
+    <path 
+      d="M14.6666 8H12L9.99998 14L5.99998 2L3.99998 8H1.33331" 
+      stroke="var(--svg-stroke-color)" 
+      strokeWidth="1.6" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    />
+  </Icon>
+);
+```
+
+### アイコンスタイリング
+
+**アイコンCSSクラス:**
+```css
+/* src/icons.css */
+.icon {
+  --icon-color: var(--sds-color-icon-brand-default);
+  --svg-stroke-color: var(--icon-color);
+  --svg-fill-color: var(--icon-color);
+  height: var(--icon-diameter);
+  width: var(--icon-diameter);
+}
+
+.icon-size-16 { --icon-diameter: var(--sds-typography-scale-03); }
+.icon-size-24 { --icon-diameter: var(--sds-size-icon-small); }
+.icon-size-32 { --icon-diameter: var(--sds-size-icon-medium); }
+```
+
+**アイコン使用パターン:**
+```tsx
+import { IconActivity, IconButton } from "icons";
+
+// 基本使用
+<IconActivity className="icon icon-size-24" />
+
+// IconButtonコンポーネント内での使用
+<IconButton>
+  <IconActivity />
+</IconButton>
+```
+
+## 6. スタイリングアプローチ
+
+### CSS方法論
+
+**グローバルCSS + BEMライクな命名:**
+```css
+/* コンポーネント単位でのCSS分割 */
+/* src/ui/primitives/Button/button.css */
+
+.button { /* ベーススタイル */ }
+.button-size-small { /* サイズバリエーション */ }
+.button-variant-primary { /* カラーバリエーション */ }
+```
+
+### レスポンシブデザイン
+
+**レスポンシブユーティリティ:**
+```css
+/* src/responsive.css から生成されるユーティリティクラス */
+.display-none-to-flex {
+  display: var(--sds-responsive-display-none-to-flex) !important;
+}
+.display-flex-to-none {
+  display: var(--sds-responsive-display-flex-to-none) !important;
+}
+```
+
+**モバイルファースト設計:**
+```css
+/* デフォルト（モバイル）スタイル */
+.component {
+  padding: var(--sds-size-space-200);
+}
+
+/* タブレット以上 */
+@media (min-width: 768px) {
+  .component {
+    padding: var(--sds-size-space-400);
+  }
+}
+```
+
+## 7. プロジェクト構造とパターン
+
+### ディレクトリ組織
+
+```
+/
+├── src/
+│   ├── data/                    # データレイヤー（状態管理・API）
+│   │   ├── contexts/           # Reactコンテキスト
+│   │   ├── providers/          # コンテキストプロバイダー
+│   │   ├── services/           # APIサービス
+│   │   ├── hooks/              # データ関連フック
+│   │   └── types/              # TypeScript型定義
+│   ├── ui/                     # UIレイヤー
+│   │   ├── primitives/         # 原子的コンポーネント
+│   │   ├── compositions/       # 複合コンポーネント
+│   │   ├── layout/            # レイアウトコンポーネント
+│   │   ├── icons/             # アイコンコンポーネント
+│   │   └── hooks/             # UI関連フック
+│   ├── figma/                  # Figma Code Connect定義
+│   │   ├── primitives/        # プリミティブコンポーネントのマッピング
+│   │   ├── compositions/      # 複合コンポーネントのマッピング
+│   │   └── icons/             # アイコンのマッピング
+│   ├── theme.css              # デザイントークン（自動生成）
+│   ├── icons.css              # アイコンスタイル
+│   ├── index.css              # グローバルスタイル
+│   ├── reset.css              # CSSリセット
+│   └── responsive.css         # レスポンシブユーティリティ
+├── scripts/                    # Figma同期スクリプト
+│   ├── tokens/                # トークン同期
+│   └── icons/                 # アイコン同期
+└── .env                       # Figma APIトークン設定
+```
+
+### 機能別組織パターン
+
+**データレイヤー分離:**
+```
+src/data/
+├── contexts/
+│   ├── AuthContext.tsx        # 認証状態
+│   ├── PricingContext.tsx     # 価格設定状態
+│   └── ProductsContext.tsx    # 商品状態
+├── providers/
+│   ├── AuthProvider.tsx       # 認証プロバイダー
+│   └── AllProviders.tsx       # 全プロバイダーの統合
+├── hooks/
+│   ├── useAuth.ts            # 認証フック
+│   ├── usePricing.ts         # 価格設定フック
+│   └── useProducts.ts        # 商品フック
+└── services/
+    ├── authService.ts        # 認証API
+    └── productsService.ts    # 商品API
+```
+
+## 8. Figma統合ワークフロー
+
+### Figma Code Connect設定
+
+**Code Connectファイルの構造:**
+```tsx
+// src/figma/primitives/Button.figma.tsx
+import { figma } from "@figma/code-connect";
+import { Button } from "../../ui/primitives/Button/Button";
+
+figma.connect(Button, "https://figma.com/design/...", {
+  props: {
+    variant: figma.enum("Variant", {
+      Primary: "primary",
+      Secondary: "neutral",
+      Subtle: "subtle",
+    }),
+    size: figma.enum("Size", {
+      Small: "small",
+      Medium: "medium",
+    }),
+    children: figma.textContent("Label"),
+  },
+  example: ({ variant, size, children }) => (
+    <Button variant={variant} size={size}>
+      {children}
+    </Button>
+  ),
+});
+```
+
+### Figma MCP統合での推奨フロー
+
+**1. デザイン分析フェーズ:**
+```tsx
+// Figmaデザインの確認
+const nodeImage = await figma.getImage(nodeId);
+const nodeMetadata = await figma.getMetadata(nodeId);
+const variableDefinitions = await figma.getVariableDefs(nodeId);
+```
+
+**2. コンポーネント実装フェーズ:**
+```tsx
+// 既存コンポーネントのマッピング確認
+const codeConnectMap = await figma.getCodeConnectMap(nodeId);
+
+// コンポーネントコード生成
+const generatedCode = await figma.getCode(nodeId);
+```
+
+**3. 実装時の確認点:**
+- エイリアスインポートの使用
+- デザイントークンの適用
+- React Aria Componentsの活用
+- 適切なCSS命名規則の遵守
+
+### デザイントークン更新フロー
+
+**定期的なトークン同期:**
+```bash
+# 1. Figmaからトークンを同期
+npm run script:tokens
+
+# 2. 変更を確認
+git diff src/theme.css
+
+# 3. アプリケーションをリビルド
+npm run app:build
+
+# 4. Storybookで視覚確認
+npm run storybook
+```
+
+## 9. 開発時の重要な原則
+
+### コンポーネント開発ガイドライン
+
+**1. 既存コンポーネントの優先使用:**
+```tsx
+// ✅ 推奨 - 既存SDSコンポーネントを使用
+import { Button, Text, Flex } from "primitives";
+import { Card } from "compositions";
+
+// ❌ 非推奨 - カスタムコンポーネントの作成
+const CustomButton = styled.button`...`;
+```
+
+**2. デザイントークンの必須使用:**
+```css
+/* ✅ 推奨 - トークンを使用 */
+.component {
+  color: var(--sds-color-text-default-default);
+  padding: var(--sds-size-space-400);
+  font: var(--sds-font-body-base);
+}
+
+/* ❌ 非推奨 - ハードコーディング */
+.component {
+  color: #333333;
+  padding: 16px;
+  font-family: Arial, sans-serif;
+}
+```
+
+**3. TypeScript型安全性の確保:**
+```tsx
+// 適切な型定義の使用
+import type { ButtonProps } from "primitives";
+
+interface CustomComponentProps extends ButtonProps {
+  customProp: string;
+}
+```
+
+### パフォーマンス考慮事項
+
+**1. 必要最小限のインポート:**
+```tsx
+// ✅ 推奨 - 名前付きインポート
+import { Button, Text } from "primitives";
+
+// ❌ 非推奨 - デフォルトインポート
+import Primitives from "primitives";
+```
+
+**2. CSS最適化:**
+```css
+/* トークンを使用した効率的なスタイリング */
+.component {
+  font: var(--sds-font-body-base); /* 複数プロパティを一度に設定 */
+}
+```
+
+## 10. Figma MCPツール使用時のベストプラクティス
+
+### ツール選択ガイド
+
+**`get_code` - コンポーネント実装時に最優先で使用**
+```tsx
+// Figmaデザインからコンポーネントコードを取得
+const componentCode = await figma.getCode(nodeId);
+```
+
+**`get_variable_defs` - トークンマッピング確認時**
+```tsx
+// デザイントークンの定義を確認
+const variables = await figma.getVariableDefs(nodeId);
+```
+
+**`get_image` - 視覚的な参考が必要な時**
+```tsx
+// デザインの視覚的確認
+const designImage = await figma.getImage(nodeId);
+```
+
+**`get_metadata` - 構造確認時（概要把握のみ）**
+```tsx
+// デザイン構造の概要確認（詳細実装前の調査用）
+const metadata = await figma.getMetadata(nodeId);
+```
+
+### 実装時の確認チェックリスト
+
+**コンポーネント実装後:**
+- [ ] 適切なインポートエイリアスを使用
+- [ ] デザイントークンで全てのスタイルを定義
+- [ ] React Aria Componentsの活用
+- [ ] TypeScript型安全性の確保
+- [ ] レスポンシブデザインの対応
+- [ ] アクセシビリティの配慮
+
+**統合前の最終確認:**
+- [ ] `npm run app:lint` でのコード品質チェック
+- [ ] `npm run app:build` でのビルド成功確認
+- [ ] Storybookでの視覚的確認
+- [ ] デザインとの視覚的整合性確認
+
+このルールドキュメントに従って、Figma MCPツールを効果的に活用し、一貫性のあるデザインシステムを構築してください。

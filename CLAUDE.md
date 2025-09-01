@@ -93,3 +93,113 @@ The codebase includes a complete data layer with examples for:
 - **Form handling**: Validation, submission, error states
 
 Use the provided contexts and hooks rather than implementing custom state management.
+
+## Storybook Structure and Guidelines
+
+### Storybook Configuration
+- **Development**: `npm run storybook` - Launch at localhost:6006
+- **Build**: `npm run storybook:build` - Build to dist/storybook
+- **Vite Integration**: React-Vite framework with path alias support
+- **TypeScript**: Full TypeScript support with react-docgen-typescript
+
+### Story Organization
+```
+src/stories/
+├── _welcome/
+│   └── Hello.stories.tsx        # Welcome page introducing SDS
+├── primitives/
+│   ├── Button.stories.tsx       # Button component with variants
+│   ├── Input.stories.tsx        # Input component examples
+│   ├── Text.stories.tsx         # Typography components
+│   └── ...                      # All primitive components
+├── compositions/
+│   ├── Cards.stories.tsx        # Complex card patterns  
+│   ├── Forms.stories.tsx        # Form composition examples
+│   └── ...                      # Composition patterns
+├── layout/
+│   ├── Flex.stories.tsx         # Flex layout examples
+│   ├── Grid.stories.tsx         # Grid layout examples
+│   └── Section.stories.tsx      # Section layout examples
+└── hooks/
+    └── useMediaQuery.stories.tsx # Custom hook demonstrations
+```
+
+### Story Writing Patterns
+
+**Standard Story Structure:**
+```tsx
+import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "primitives";
+
+const meta: Meta<typeof Button> = {
+  component: Button,
+  title: "SDS Primitives/Buttons",  // Hierarchical naming
+  parameters: { layout: "centered" },
+};
+export default meta;
+
+export const StoryButton: StoryObj<typeof Button> = {
+  name: "Button",
+  args: {
+    children: "Hello world",
+    variant: "primary",
+  },
+  argTypes: {
+    variant: {
+      control: { type: "select" },
+      options: ["primary", "neutral", "subtle"],
+    },
+  },
+  render: ({ children, ...props }) => (
+    <Button {...props}>
+      {children}
+    </Button>
+  ),
+};
+```
+
+**Multi-component Stories:**
+```tsx
+// For component groups like ButtonDanger, ButtonGroup
+export const StoryButtonGroup: StoryObj<typeof ButtonGroup> = {
+  name: "Button Group",
+  render: ({ ...props }) => (
+    <ButtonGroup {...props}>
+      <Button variant="neutral">Cancel</Button>
+      <Button variant="primary">Submit</Button>
+    </ButtonGroup>
+  ),
+};
+```
+
+### Storybook Configuration Details
+
+**Main Configuration (.storybook/main.tsx):**
+- Stories pattern: `../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)`
+- Essential addons: links, essentials, interactions
+- Path aliases configured for all UI modules
+- TypeScript support with react-docgen-typescript
+
+**Preview Configuration (.storybook/preview.tsx):**
+- Global CSS imports: `../src/index.css`, `../src/theme.css`
+- Custom theme integration
+- Consistent styling across all stories
+
+### Story Naming Conventions
+- **Title Structure**: `"SDS [Category]/[Component Name]"`
+- **Story Names**: Descriptive names like "Button", "Button Danger", "Button Group"
+- **File Names**: `[ComponentName].stories.tsx`
+- **Export Names**: `Story[ComponentName]` format
+
+### Component Documentation Guidelines
+- Use `argTypes` for interactive controls
+- Include common props and variants
+- Provide realistic examples with proper content
+- Show component combinations and patterns
+- Include accessibility considerations
+
+### Integration with Design System
+- All stories use path aliases for imports
+- Components inherit design tokens from theme.css
+- Stories demonstrate proper usage patterns
+- Examples follow the established component hierarchy (primitives → compositions → layout)
